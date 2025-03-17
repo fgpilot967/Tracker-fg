@@ -157,6 +157,9 @@ table {
 </style>
 
 <body>
+
+ 
+
   <body style="background-color:lightgray;">
 
     <div class="navbar">
@@ -223,9 +226,9 @@ table {
             </tr>
             <tr>
               <td contenteditable="true" class="green" id="LiLane1Pilot1"></td>
-              <td id="lastCheckLiLane1Pilot1"><input type="date" class="inputDate"></td>
+              <td><input type="date" class="inputDate" id="lastCheck_Pilot1_2_1"></td>
               <td contenteditable="true" class="validity" id="validityLiLane1Pilot1"></td>
-              <td id="newExpiryDateLiLane1Pilot1">''</td>
+              <td id="newExpiryDateLiLane1Pilot1"></td>
               <td id="remDaysLiLane1Pilot1" class="remDays" ></td>
               <td><input type="checkbox" value="sent" id="emailSent30LiLane1Pilot1">30</td>
               <td><input type="checkbox" value="sent" id="emailSent60LiLane1Pilot1">60</td>
@@ -234,7 +237,7 @@ table {
             </tr>
             <tr>
               <td contenteditable="true" class="green" id="LiLane2Pilot1"></td>
-              <td id="lastCheckLiLane2Pilot1"><input type="date" class="inputDate"></td>
+              <td><input type="date" class="inputDate" id="lastCheckLiLane2Pilot1"></td>
               <td contenteditable="true" class="validity" id="validityLiLane2Pilot1"></td>
               <td id="newExpiryDateLiLane2Pilot1"></td>
               <td id="remDaysLiLane2Pilot1"></td>
@@ -258,7 +261,7 @@ table {
               <td contenteditable="true" class="green" id="LiLane4Pilot1"></td>
               <td id="lastCheckLiLane4Pilot1"><input type="date" class="inputDate"></td>
               <td contenteditable="true" class="validity" id="validityLiLane4Pilot1"></td>
-              <td id="newExpiryDateLiLane4Pilot1">30 NOV 2025</td>
+              <td id="newExpiryDateLiLane4Pilot1"></td>
               <td id="remDaysLiLane4Pilot1"></td>
               <td><input type="checkbox" value="sent" id="emailSent30LiLane4Pilot1">30</td>
               <td><input type="checkbox" value="sent" id="emailSent60LiLane4Pilot1">60</td>
@@ -395,9 +398,7 @@ table {
 
 <!-- BITTE überprüfen - es funktioniert nur der Return button zum speichern !!!!!!!-->
       
-      <button id="saveButton" onclick="saveTableData('Pilot1'), saveTableData('PilotList'), saveTableData('SubPilot1')">Update/Save values</button>
-
-      <button id="loadButton" onclick="loadTableData('Pilot1'), loadTableData('PilotList'), loadTableData('SubPilot1')">Load values/tables</button>
+     
 
     </div>
 
@@ -483,7 +484,7 @@ table {
 
     </div>
 
-      <button id="saveButton">Update/Save values</button>
+<!--      <button id="saveButton">Update/Save values</button> -->
 
     </div>
 
@@ -496,15 +497,23 @@ table {
     </div>
 
 
+
+    <button id="saveButton" onclick="saveTableData('Pilot1'), saveTableData('PilotList'), saveTableData('SubPilot1')">Update/Save values</button>
+
+    <!--
+    <button id="loadButton" onclick="loadTableData('Pilot1'), loadTableData('PilotList'), loadTableData('SubPilot1')">Load values/tables</button>
+    -->
+   
+
 <script>
 
+   
  // wenn Enter gedrückt wird - wird der saveButton geklickt/ausgeführt
     addEventListener("keypress", function(event) {
         if (event.key === "Enter") {
         document.getElementById("saveButton").click();
         }
     });   
-
 
 
     document.querySelectorAll(".tablinks").forEach(tab => {
@@ -541,55 +550,13 @@ table {
     evt.currentTarget.className += "active";
   }
 
-
-
-// SERVER STORAGE - Funktion zum Speichern der Tabellen auf dem Server
-// Funktion zum Speichern der Tabelle auf dem Server
-function saveTableData(tableName) {
-    const table = document.getElementById("editableTable" + tableName);
-    const rows = table.rows;
-    const tableData = [];
-
-    for (let i = 1; i < rows.length; i++) {
-        const rowData = [];
-        for (let j = 0; j < rows[i].cells.length; j++) {
-            const cell = rows[i].cells[j];
-
-            // Falls die Zelle eine Checkbox enthält
-            const input = cell.querySelector("input[type='checkbox']");
-            if (input) {
-                rowData.push(input.checked ? "sent" : "not sent"); // Speichere "sent" oder "not sent"
-            } else {
-                rowData.push(cell.innerText);
-            }
-        }
-        tableData.push(rowData);
-    }
-
-    console.log("Starte Speicheranfrage für Tabelle:", tableName);
-
-fetch("http://217.154.84.3/saveTable", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ tableName, tableData })
-})
-.then(response => {
-    console.log("Antwort erhalten, Status:", response.status);
-    if (!response.ok) {
-        throw new Error(`HTTP-Fehler! Status: ${response.status}`);
-    }
-    return response.json();
-})
-.then(data => console.log("Server-Antwort:", data))
-.catch(error => console.error("Fehler beim Speichern:", error));
-
-}
+ 
 
 
 
 // Funktion zum Laden der Tabelle von Server
-function loadTableData(tableName) {
-    fetch("http://217.154.84.3/loadTable?tableName=" + tableName)
+async function loadTableData(tableName) {
+    return fetch(`http://217.154.84.3/loadTable?tableName=${tableName}&nocache=${new Date().getTime()}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP-Fehler! Status: ${response.status}`);
@@ -597,71 +564,122 @@ function loadTableData(tableName) {
             return response.json();
         })
         .then(storedData => {
+            console.log("✅ Daten für", tableName, "geladen:", storedData);
+
             const table = document.getElementById("editableTable" + tableName);
             if (storedData && storedData.length > 0) {
-                console.log("Gespeicherte Daten für " + tableName + " geladen:", storedData);
-                
                 for (let i = 1; i < table.rows.length; i++) {
                     const row = table.rows[i];
                     if (storedData[i - 1]) {
                         for (let j = 0; j < row.cells.length; j++) {
                             const cell = row.cells[j];
 
-                            // Prüfe, ob die Zelle eine Checkbox enthält
-                            const input = cell.querySelector("input[type='checkbox']");
-                            if (input) {
-                                input.checked = storedData[i - 1][j] === "sent";
+                            const inputCheckbox = cell.querySelector("input[type='checkbox']");
+                            if (inputCheckbox) {
+                                inputCheckbox.checked = storedData[i - 1][j] === "sent";
+                            } else if (storedData[i - 1][j].match(/^\d{4}-\d{2}-\d{2}$/) || cell.querySelector("input[type='date']")) { 
+                                cell.innerHTML = "";
+                                const inputDate = document.createElement("input");
+                                inputDate.type = "date";
+                                inputDate.id = `lastCheck_${tableName}_${i}_${j}`;
+                                inputDate.value = storedData[i - 1][j];
+                                cell.appendChild(inputDate);
                             } else {
                                 cell.innerText = storedData[i - 1][j];
                             }
                         }
                     }
                 }
-            } else {
-                console.log("Keine gespeicherten Daten für " + tableName + " gefunden.");
             }
         })
-        .catch(error => console.error("Fehler beim Laden der Daten:", error));
+        .catch(error => console.error("❌ Fehler beim Laden der Daten:", error));
 }
 
 
-// const currentDate = new Date();
-
-
-/*
-
 // Buttons zum Speichern der Daten (aufrufbar für jede Tabelle)
 document.getElementById("saveButton").onclick = function() {
-    saveTableData('Pilot1');
-    saveTableData("SubPilot1");
-    //saveTableData("Gratton");
-   // saveTableData("Raymond");
-    //saveTableData("Barrie");
-    //saveTableData("Granter");
-    location.reload();
-  
+    saveTableData("Pilot1").then(() => loadTableData("Pilot1").then(() => starteBerechnung()));
+    saveTableData("SubPilot1").then(() => loadTableData("SubPilot1").then(() => starteBerechnung()));
+    saveTableData("PilotList").then(() => loadTableData("PilotList").then(() => starteBerechnung()));
 };
-*/ 
+
+  
 
 
-// Vorübergehend aus
-    window.onload = function() {
-    loadTableData('Pilot1');
-    loadTableData('SubPilot1');
-    loadTableData('PilotList');
+  // SERVER STORAGE - Funktion zum Speichern der Tabellen auf dem Server
+// Funktion zum Speichern der Tabelle auf dem Server
+function saveTableData(tableName) {
+    return new Promise((resolve, reject) => {  // Hier ein Promise erstellen
+        const table = document.getElementById("editableTable" + tableName);
+        const rows = table.rows;
+        const tableData = [];
+
+        for (let i = 1; i < rows.length; i++) {
+            const rowData = [];
+            for (let j = 0; j < rows[i].cells.length; j++) {
+                const cell = rows[i].cells[j];
+
+                const inputCheckbox = cell.querySelector("input[type='checkbox']");
+                const inputDate = cell.querySelector("input[type='date']");
+                if (inputCheckbox) {
+                    rowData.push(inputCheckbox.checked ? "sent" : "not sent");
+                } else if (inputDate) {
+                    rowData.push(inputDate.value);
+                } else {
+                    rowData.push(cell.innerText);
+                }
+            }
+            tableData.push(rowData);
+        }
+
+        fetch("http://217.154.84.3/saveTable", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ tableName, tableData })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP-Fehler! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("✅ Server-Bestätigung:", data);
+            resolve(data); // Promise erfolgreich abschließen
+        })
+        .catch(error => {
+            console.error("❌ Fehler beim Speichern:", error);
+            reject(error); // Fehler an das Promise weitergeben
+        });
+    });
+    
+}
+window.onload = function() {
+    loadAllTables(); // Startet das Laden aller Tabellen + Berechnung
+};
+
+async function loadAllTables() {
+    console.log("🚀 Lade alle Tabellen...");
+    await loadTableData("Pilot1");
+    await loadTableData("SubPilot1");
+    await loadTableData("PilotList");
+
+    console.log("✅ Alle Daten geladen. Starte Berechnung...");
+    starteBerechnung();
+}
+
+// Neue Berechnungsfunktion (statt setTimeout())
+function starteBerechnung() {
+    console.log("🚀 Starte Berechnung...");
 
 
-// muss bearbeitet werden
-    //loadTableData("Gratton");
-    //loadTableData("Raymond");
-    //loadTableData("Barrie");
-    //loadTableData("Granter");
+
 
     const currentDate = new Date();
     
-    setTimeout(() => {
+    // setTimeout(() => {
 
- 
+      
 
 // const für auto-Email      
       const getLiLane1Pilot1 = document.getElementById("LiLane1Pilot1").innerText;
@@ -696,28 +714,51 @@ console.log(NameTablePilot1);
 console.log(getLiLane1Pilot1);
 
 
-// den string (p) in eine Number convertieren mit dem + Symbol
-                    let ValidityStringLiLane1Pilot1 = document.getElementById("validityLiLane1Pilot1").innerText;
-                    let validityLiLane1Pilot1 = +ValidityStringLiLane1Pilot1;
-                     
-// diese function addiert die Monate zu dem Datum
-                    function addMonthsToDateLiLane1Pilot1(date, months) {
-                        let newDateLiLane1Pilot1 = new Date(document.getElementById("lastCheckLiLane1Pilot1").innerText);
-                        newDateLiLane1Pilot1.setMonth(newDateLiLane1Pilot1.getMonth() + months);
-                        return newDateLiLane1Pilot1;
-                    }
+// Hol das Datum aus dem Input-Feld
+let lastCheckLiLane1Pilot1 = document.getElementById("lastCheck_Pilot1_2_1").value;
+let ValidityLiLane1Pilot1 = document.getElementById("validityLiLane1Pilot1").innerText;
+let validityLiLane1Pilot1 = +ValidityLiLane1Pilot1;
 
-// Berechnung: Last Check + "validityMedicalPilot1" Monate
-// das "new Date" nimmt den Inhalt aus id=lastCheck als Datum (es muss "Jahr-Monat-Tag" sein)
-                    let LastCheckLiLane1Pilot1 = new Date(document.getElementById("lastCheckLiLane1Pilot1").innerText);
-            
-// hier wird die function "addMonthsToDate" ausgeführt
-                    let NewExpiryDateLiLane1Pilot1 = addMonthsToDateLiLane1Pilot1(LastCheckLiLane1Pilot1, validityLiLane1Pilot1);
-                    document.getElementById("newExpiryDateLiLane1Pilot1").innerText = NewExpiryDateLiLane1Pilot1.toLocaleDateString();
-           
-                    const remainingTimeLiLane1Pilot1 = NewExpiryDateLiLane1Pilot1 - currentDate;
-                    const remainingDaysLiLane1Pilot1 = Math.floor(remainingTimeLiLane1Pilot1 / (1000 * 60 * 60 * 24));
-                    document.getElementById("remDaysLiLane1Pilot1").innerText = remainingDaysLiLane1Pilot1;
+
+
+
+console.log(lastCheckLiLane1Pilot1);
+console.log(typeof lastCheckLiLane1Pilot1);
+
+
+
+    // YYYY-MM-DD in Jahr, Monat, Tag aufteilen
+    let parts = lastCheckLiLane1Pilot1.split("-");
+
+    // Neues Date-Objekt mit (Jahr, Monat-1, Tag) erstellen
+    let DateInputLiLane1Pilot1 = new Date(parts[0], parts[1] - 1, parts[2]);
+
+    DateInputLiLane1Pilot1.setMonth(DateInputLiLane1Pilot1.getMonth() + validityLiLane1Pilot1);
+
+    //let currentDate = new Date();
+
+    // Verbleibende Tage ausrechnen
+    const remainingTimeLiLane1Pilot1 = DateInputLiLane1Pilot1 - currentDate;
+    const remainingDaysLiLane1Pilot1 = Math.floor(remainingTimeLiLane1Pilot1 / (1000 * 60 * 60 * 24)) + 1;
+    console.log(remainingDaysLiLane1Pilot1);
+    console.log(typeof remainingDaysLiLane1Pilot1);
+    document.getElementById("remDaysLiLane1Pilot1").innerText = remainingDaysLiLane1Pilot1;
+
+
+    // DD-MM-YYYY aus Date-Objekt erstellen (damit keine Zeitzonenprobleme auftreten)
+    let day = DateInputLiLane1Pilot1.getDate().toString().padStart(2, "0");
+    let month = (DateInputLiLane1Pilot1.getMonth() + 1).toString().padStart(2, "0"); // Monate in JS starten bei 0
+    let year = DateInputLiLane1Pilot1.getFullYear();
+
+    let formattedDate = `${day}-${month}-${year}`;
+
+    console.log("Eingegebenes Datum (DD-MM-YYYY):", formattedDate);
+
+    // In die zweite Zelle schreiben
+    document.getElementById("newExpiryDateLiLane1Pilot1").innerText = formattedDate;
+
+
+
                     if (remainingDaysLiLane1Pilot1 <= 30 && !document.getElementById("emailSent30LiLane1Pilot1").checked) {
                       const recipient = 'Pilot1@abc.com';
                       const ccRecipient = 'xxx@abc.com, xyz@abc.com';  // Hier die CC-E-Mail-Adresse einfügen, weitere emails durch Komma getrennt
@@ -763,6 +804,26 @@ console.log(getLiLane1Pilot1);
                     }
 
 // LiLane1 Pilot1 --------Ende---------------------------------------------
+
+
+
+// MUSS NACHHER ANS ENDE
+// Wenn remDays < 90 dann die Zelle gelb färben
+document.querySelectorAll(".remDays").forEach(zelle => {
+      let zahl = parseInt(zelle.innerText, 10);
+
+      if (zahl <= 0) {
+        zelle.style.backgroundColor = "red";
+        zelle.style.color = "white";
+      } else if (zahl <= 90) {
+        zelle.style.backgroundColor = "yellow";
+      }
+    });
+
+
+
+
+
 
 
 // LiLane 2 Pilot1 --------Anfang---------------------------------------------
@@ -1688,34 +1749,13 @@ let ValidityStringLiLane15Pilot1 = document.getElementById("validityLiLane15Pilo
 
 
 // PILOT 2
+     
 
-
-
-/*
-const NameTablePilot2 = "Pilot Name 2";
-      const LicenseNameTablePilot2 = "123456789";
-      document.querySelector("#headPilot2").innerText = `${NameTablePilot2}  / License No.: ${LicenseNameTablePilot2}`;
-      document.querySelector("#headSubPilot2").innerText = `${NameTablePilot2}  / License No.: ${LicenseNameTablePilot2}`;
-
-*/ 
-      // Wenn remDays < 90 dann die Zelle gelb färben
-      document.querySelectorAll(".remDays").forEach(zelle => {
-      let zahl = parseInt(zelle.innerText, 10);
-
-      if (zahl <= 0) {
-        zelle.style.backgroundColor = "red";
-        zelle.style.color = "white";
-      } else if (zahl <= 90) {
-        zelle.style.backgroundColor = "yellow";
-      }
-    });
-
-
-  }, 2000); // 100ms warten, damit `loadTableData()` zuerst läuft
             
           };
+        
   
-          
+         
 
 
 </script>
