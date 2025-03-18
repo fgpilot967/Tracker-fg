@@ -19,6 +19,7 @@ body {
   top: 0;
   left: 0;
   z-index: 1000;
+  padding: 5px;
 
 }
 
@@ -52,6 +53,7 @@ body {
 .navbar a:hover, .dropdown:hover .dropbtn {
   background-color: rgb(168, 185, 170);
   color: black;
+  cursor: pointer;
 }
 
 .dropdown-content {
@@ -156,6 +158,7 @@ table {
         margin-left: 10px;
         margin-right: 10px;
         opacity: 0.8;
+        
     }
 
     #loadButton {
@@ -585,7 +588,10 @@ table {
 
 
 
-<!-- ID Pilot 2 -->    
+<div id="pilot2" class="tabcontent">
+  <h4 id="PageNamePilot2"></h4>
+  <p>Individual Pilot Information</p>
+</div>
 
    
 
@@ -650,13 +656,13 @@ table {
     evt.currentTarget.className += "active";
   }
 
- 
-
+ // dieses habe ich unten rausgenommen
+ // return fetch(`http://217.154.84.3/loadTable?tableName=${tableName}&nocache=${new Date().getTime()}`)
 
 
 // Funktion zum Laden der Tabelle von Server
 async function loadTableData(tableName) {
-    return fetch(`http://217.154.84.3/loadTable?tableName=${tableName}&nocache=${new Date().getTime()}`)
+    return fetch(`https://fgienau.de/loadTable?tableName=${tableName}&nocache=${new Date().getTime()}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP-Fehler! Status: ${response.status}`);
@@ -748,7 +754,7 @@ function saveTableData(tableName) {
             tableData.push(rowData);
         }
 
-        fetch("http://217.154.84.3/saveTable", {
+        fetch("https://fgienau.de/saveTable", {       // raus fetch("http://217.154.84.3/saveTable", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tableName, tableData })
@@ -829,7 +835,7 @@ function starteBerechnung() {
 
 
 console.log(NameTablePilot1);
-console.log(getLiLane1Pilot1);
+//console.log(getLiLane1Pilot1);
 
 // const für auto-Email      
       const getLiLane1Pilot1 = document.getElementById("LiLane1Pilot1").innerText;
