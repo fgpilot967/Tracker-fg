@@ -9,11 +9,16 @@
 <style>
 body {
   font-family: Arial, Helvetica, sans-serif;
+  margin-top: 80px;
 }
 
 .navbar {
-  overflow: hidden;
+  overflow: visible;
   background-color: #333;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
 
 }
 
@@ -45,7 +50,8 @@ body {
 
 
 .navbar a:hover, .dropdown:hover .dropbtn {
-  background-color: red;
+  background-color: rgb(168, 185, 170);
+  color: black;
 }
 
 .dropdown-content {
@@ -54,7 +60,7 @@ body {
   background-color: #f9f9f9;
   min-width: 160px;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
+  z-index: 1001;
 }
 
 .dropdown-content a {
@@ -67,7 +73,7 @@ body {
 }
 
 .dropdown-content a:hover {
-  background-color: lightgreen;
+  background-color: rgb(168, 185, 170);
 }
 
 .dropdown:hover .dropdown-content {
@@ -82,7 +88,8 @@ body {
           display: flex;
           justify-content: space-evenly;
           text-align: center; 
-          flex-wrap: wrap;    
+          flex-wrap: wrap;
+          margin-top: 100px;    
     }
 
 table {
@@ -139,19 +146,43 @@ table {
     }
 
     #saveButton {
-        height: 50px;
-        width: 200px;
+        height: auto;
+        width: 150px;
         background-color: brown;
-        font-size: 20px;
+        font-size: 16px;
         color: aliceblue;
         border-radius: 20px;
         cursor: pointer;
-        position: sticky;
-        bottom: 100px;
+        margin-left: 10px;
+        margin-right: 10px;
+        opacity: 0.8;
+    }
+
+    #loadButton {
+        height: auto;
+        width: 150px;
+        background-color: rgb(168, 185, 170);
+        font-size: 16px;
+        color: black;
+        border-radius: 20px;
+        cursor: pointer;
+        margin-left: 10px;
+        margin-right: 10px;
+        opacity: 0.8;
+    }
+
+    #saveButton:hover, #loadButton:hover {
+      opacity: 1.0;
     }
 
     #headPilot1, #headSubPilot1, #headPilot2, #headSubPilot2 {
       background-color: orange;
+    }
+
+    .inputClass {
+      width: 300px;
+      height: 20px;
+
     }
 
 </style>
@@ -185,10 +216,15 @@ table {
       </div> 
 
       <a class="tablinks" onclick="openTab(event, 'setup')">Setup</a>
+
+      <a id="saveButton" onclick="saveTableData('Pilot1'), saveTableData('PilotList'), saveTableData('SubPilot1')">Save values/tables</a>
+
+      <a id="loadButton" onclick="loadTableData('Pilot1'), loadTableData('PilotList'), loadTableData('SubPilot1')">Load values/tables</a>
+
     </div>
     
 <div id="setup" class="tabcontent">
-      <h3>Verschiedene Einstellungen</h3>
+      <h3>General Setup</h3>
 
   <div class="flexbox">   
     <div>
@@ -465,16 +501,20 @@ table {
 
 <div id="pilot1" class="tabcontent">
       <h4 id="PageNamePilot1"></h4>
-      <p>Daten von einmaligen Ereignissen des Piloten</p>
+      <p>Individual Pilot Information</p>
    
    
 
   <div class="flexbox">
 
     <!-- Noch genaue ID hinzufügen-->
-    <div style="font-size: 24px; align-content: center;">
-      <label for="email">Enter Pilot's email:</label>
-      <input type="email" id="email" name="email">
+    <div>
+      <form>
+        <label for="email">Enter Pilot's email:</label><br><br>
+        <input class="inputClass" type="email" id="EmailPilot1" name="email"><br><br><br>
+        <label for="phone">Enter Pilot's phone number:</label><br><br>
+        <input class="inputClass" type="tel" id="PhonePilot1" name="phone" placeholder="+##-123-456789">
+      </form>
     </div>
 
     <div>
@@ -564,13 +604,6 @@ table {
     </div>
 
 
-
-    <button id="saveButton" onclick="saveTableData('Pilot1'), saveTableData('PilotList'), saveTableData('SubPilot1')">Update/Save values</button>
-
-    <!--
-    <button id="loadButton" onclick="loadTableData('Pilot1'), loadTableData('PilotList'), loadTableData('SubPilot1')">Load values/tables</button>
-    -->
-   
 
 <script>
 
