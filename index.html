@@ -94,6 +94,17 @@ body {
           margin-top: 100px;    
     }
 
+.flexboxPiloten {
+
+      display: flex;
+      flex-wrap: wrap;
+
+}
+
+.flexDivPiloten {
+  margin-left: 50px;
+}
+
 table {
       border: 1px;
       border-style: solid;
@@ -178,9 +189,10 @@ table {
       opacity: 1.0;
     }
 
-    #headPilot1, #headSubPilot1, #headPilot2, #headSubPilot2 {
+    #firstRowPilotList, #headPilot1, #headSubPilot1, #headPilot2, #headSubPilot2 {
       background-color: orange;
     }
+
 
     .inputClass {
       width: 300px;
@@ -232,7 +244,7 @@ table {
   <div class="flexbox">   
     <div>
       <table id="editableTablePilotList">
-        <tr>
+        <tr id="firstRowPilotList">
           <th>No.</th>
           <th>Name</th>
           <th>License No.</th>
@@ -508,11 +520,12 @@ table {
    
    
 
-  <div class="flexbox">
+  <div class="flexboxPiloten">
 
     <!-- Noch genaue ID hinzufügen-->
-    <div>
+    <div class="flexDivPiloten">
       <form>
+        <br><br><br>
         <label for="email">Enter Pilot's email:</label><br><br>
         <input class="inputClass" type="email" id="EmailPilot1" name="email"><br><br><br>
         <label for="phone">Enter Pilot's phone number:</label><br><br>
@@ -520,7 +533,7 @@ table {
       </form>
     </div>
 
-    <div>
+    <div class="flexDivPiloten">
       <table id="editableTableSubPilot1">
         <tr>
           <th colspan="3" id="headSubPilot1"></th>
@@ -691,7 +704,7 @@ async function loadTableData(tableName) {
                                 inputDate.value = storedData[i - 1][j];
                                 cell.appendChild(inputDate);
 
-                                
+              // spezielle Ausgabe nur zur Kontrolle
                     console.log(`Zelle(${i}, ${j})`, storedData[i-1][j]);
                     console.log('Server-Antwort:',JSON.stringify(storedData, null, 2));
                     // Prüfen, ob es einen "id"-Wert gibt (falls der Server IDs speichert)
