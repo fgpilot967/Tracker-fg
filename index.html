@@ -94,16 +94,6 @@ body {
           margin-top: 100px;    
     }
 
-.flexboxPiloten {
-
-      display: flex;
-      flex-wrap: wrap;
-
-}
-
-.flexDivPiloten {
-  margin-left: 50px;
-}
 
 table {
       border: 1px;
@@ -189,7 +179,7 @@ table {
       opacity: 1.0;
     }
 
-    #firstRowPilotList, #headPilot1, #headSubPilot1, #headPilot2, #headSubPilot2 {
+    #firstRowPilotList, #headPilot1, #headSubPilot1, #headPilot2, #headSubPilot2, #headDatenPilot1 {
       background-color: orange;
     }
 
@@ -232,9 +222,9 @@ table {
 
       <a class="tablinks" onclick="openTab(event, 'setup')">Setup</a>
 
-      <a id="saveButton" onclick="saveTableData('Pilot1'), saveTableData('PilotList'), saveTableData('SubPilot1')">Save values/tables</a>
+      <a id="saveButton" onclick="saveTableData('Pilot1'), saveTableData('PilotList'), saveTableData('SubPilot1'), saveTableData('DatenPilot1')">Save values/tables</a>
 
-      <a id="loadButton" onclick="loadTableData('Pilot1'), loadTableData('PilotList'), loadTableData('SubPilot1')">Load values/tables</a>
+      <a id="loadButton" onclick="loadTableData('Pilot1'), loadTableData('PilotList'), loadTableData('SubPilot1'), loadTableData('DatenPilot1')">Load values/tables</a>
 
     </div>
     
@@ -248,7 +238,7 @@ table {
           <th>No.</th>
           <th>Name</th>
           <th>License No.</th>
-          <th>XXX</th>
+          <th>xxx</th>
         </tr>
         <tr>
           <td>Pilot 1</td>
@@ -520,20 +510,37 @@ table {
    
    
 
-  <div class="flexboxPiloten">
-
-    <!-- Noch genaue ID hinzufügen-->
-    <div class="flexDivPiloten">
-      <form>
-        <br><br><br>
-        <label for="email">Enter Pilot's email:</label><br><br>
-        <input class="inputClass" type="email" id="EmailPilot1" name="email"><br><br><br>
-        <label for="phone">Enter Pilot's phone number:</label><br><br>
-        <input class="inputClass" type="tel" id="PhonePilot1" name="phone" placeholder="+##-123-456789">
-      </form>
+  <div class="flexbox">
+    <div>
+      <table id="editableTableDatenPilot1">
+        <tr>
+          <th colspan="2" id="headDatenPilot1"></th>
+        </tr>
+        <tr>
+          <th>Subject</th>
+          <th style="width: 380px;">Value</th>
+        </tr>
+        <tr>
+          <td>Company Email</td>
+          <td contenteditable="true" id="CompanyEmailDatenPilot1" class="green"></td>
+        </tr>
+        <tr>
+          <td>Private Email</td>
+          <td contenteditable="true" id="PrivateEmailDatenPilot1" class="green"></td>
+        </tr>
+        <tr>
+          <td>Company Phone No.</td>
+          <td contenteditable="true" id="CompanyPhoneDatenPilot1" class="green"></td>
+        </tr>
+        <tr>
+          <td>Private Phone No.</td>
+          <td contenteditable="true" id="PrivatePhoneDatenPilot1" class="green"></td>
+        </tr>
+      </table>
     </div>
+   
 
-    <div class="flexDivPiloten">
+    <div>
       <table id="editableTableSubPilot1">
         <tr>
           <th colspan="3" id="headSubPilot1"></th>
@@ -736,6 +743,7 @@ document.getElementById("saveButton").onclick = function() {
     saveTableData("Pilot1").then(() => loadTableData("Pilot1").then(() => starteBerechnung()));
     saveTableData("SubPilot1").then(() => loadTableData("SubPilot1").then(() => starteBerechnung()));
     saveTableData("PilotList").then(() => loadTableData("PilotList").then(() => starteBerechnung()));
+    saveTableData("DatenPilot1").then(() => loadTableData("DatenPilot1").then(() => starteBerechnung()));
 };
 
   
@@ -798,6 +806,7 @@ async function loadAllTables() {
     await loadTableData("Pilot1");
     await loadTableData("SubPilot1");
     await loadTableData("PilotList");
+    await loadTableData("DatenPilot1");
 
     console.log("✅ Alle Daten geladen. Starte Berechnung...");
     starteBerechnung();
@@ -819,6 +828,7 @@ function starteBerechnung() {
   // Namen in den Header der Tabellen schreiben
       document.querySelector("#headPilot1").innerText = `${NameTablePilot1}  / License No.: ${LicenseNameTablePilot1}`;
       document.querySelector("#headSubPilot1").innerText = `${NameTablePilot1}  / License No.: ${LicenseNameTablePilot1}`;
+      document.querySelector("#headDatenPilot1").innerText = `${NameTablePilot1}  / License No.: ${LicenseNameTablePilot1}`;
 
   // Namen in die Liste und Seiten-Namen
       document.querySelector("#ListNamePilot1").innerText = `${NameTablePilot1}`;
